@@ -6,6 +6,9 @@
 
 A comprehensive and customizable social sharing library for React applications. Works seamlessly with both JavaScript (JSX) and TypeScript (TSX) projects.
 
+![Social Share Icons](assets/images/social-icons.png)
+
+
 ## Table of Contents
 
 - [Installation](#-installation)
@@ -42,6 +45,7 @@ pnpm add react-social-kit
 ```
 
 ## ⚡ Quick Start
+
 
 ```jsx
 import React from 'react';
@@ -534,7 +538,7 @@ function App() {
 
 ## 📄 License
 
-MIT © [Shahid](https://github.com/shahid-dev018)
+MIT 
 
 
 
