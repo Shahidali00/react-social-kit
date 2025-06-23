@@ -1,3 +1,6 @@
+// Remove the duplicate declaration at the top of this file
+// and use the one from global.d.ts
+
 /**
  * Safely checks if a property exists on the global/window object
  */
@@ -8,8 +11,8 @@ export const hasGlobalProperty = (propertyName: string): boolean => {
     }
     
     // For Node.js or React Native environments
-    if (typeof global !== 'undefined') {
-      return propertyName in global;
+    if (typeof globalThis !== 'undefined') {
+      return propertyName in globalThis;
     }
     
     return false;
@@ -29,9 +32,14 @@ export const isBrowser = (): boolean => {
  * Checks if the code is running in a Node.js environment
  */
 export const isNode = (): boolean => {
-  return typeof process !== 'undefined' && 
-         process.versions != null && 
-         process.versions.node != null;
+  try {
+    // @ts-ignore - Ignoring process error as this is a runtime check
+    return typeof process !== 'undefined' && 
+           process.versions != null && 
+           process.versions.node != null;
+  } catch (e) {
+    return false;
+  }
 };
 
 /**
@@ -88,3 +96,6 @@ export const getPlatform = (): string => {
   
   return 'unknown';
 };
+
+
+

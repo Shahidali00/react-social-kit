@@ -1,12 +1,33 @@
 import React from 'react';
 import { useShareContext } from '../context/ShareContext';
-import { share, ShareOptions } from '../utils/shareApi';
 import { useShareTracking } from '../hooks/useShareTracking';
-import { isReactNativeAvailable } from '../utils/platform';
+import { share, ShareOptions } from '../utils/shareApi';
+import { 
+  FacebookIcon, 
+  TwitterIcon, 
+  LinkedInIcon, 
+  WhatsAppIcon,
+  TelegramIcon,
+  EmailIcon,
+  RedditIcon,
+  PinterestIcon,
+  CopyIcon
+} from '../utils/icons';
 
-export interface ShareProps extends Omit<ShareOptions, 'url'> {
+export interface ShareProps {
   platform: string;
-  url?: string; // Make url optional
+  url?: string;
+  title?: string;
+  text?: string;
+  description?: string; // Add explicit description property
+  media?: string;
+  hashtags?: string[];
+  via?: string;
+  summary?: string;
+  source?: string;
+  preferWebShare?: boolean;
+  fallbackToWindow?: boolean;
+  onShareComplete?: (result: { success: boolean; platform: string }) => void;
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
@@ -14,13 +35,13 @@ export interface ShareProps extends Omit<ShareOptions, 'url'> {
   iconStyle?: React.CSSProperties;
   textStyle?: React.CSSProperties;
   size?: 'small' | 'medium' | 'large';
+  iconSize?: number; // New prop for custom icon size
   variant?: 'solid' | 'outline' | 'text';
   shape?: 'square' | 'rounded' | 'pill';
   icon?: React.ReactNode;
-  text?: string;
   showCount?: boolean;
   disabled?: boolean;
-  onShareComplete?: (result: { success: boolean; platform: string }) => void;
+  showText?: boolean;
 }
 
 export const Share: React.FC<ShareProps> = ({
@@ -28,6 +49,7 @@ export const Share: React.FC<ShareProps> = ({
   url,
   title,
   text,
+  description,
   media,
   hashtags,
   via,
@@ -35,6 +57,7 @@ export const Share: React.FC<ShareProps> = ({
   source,
   preferWebShare,
   fallbackToWindow,
+  onShareComplete,
   children,
   className = '',
   style,
@@ -42,151 +65,188 @@ export const Share: React.FC<ShareProps> = ({
   iconStyle,
   textStyle,
   size = 'medium',
+  iconSize, // New prop for custom icon size
   variant = 'solid',
   shape = 'rounded',
   icon,
-  text: buttonText,
   showCount = false,
   disabled = false,
-  onShareComplete
+  showText = false,
 }) => {
   const context = useShareContext();
   const { trackShare } = useShareTracking();
   
-  // Use context values as fallbacks
-  const finalUrl = url || context.defaultUrl || (typeof window !== 'undefined' ? window.location.href : '');
-  const finalPreferWebShare = preferWebShare ?? context.preferNative;
-  const finalFallbackToWindow = fallbackToWindow ?? context.fallbackToWindow;
+  // Get values from context if not provided as props
+  const finalUrl = url || context.defaultUrl || '';
+  const finalTitle = title || context.defaultTitle || '';
+  const finalText = text || context.defaultText || '';
+  const finalDescription = description || context.defaultDescription || '';
+  const finalMedia = media || context.defaultMedia || '';
+  const finalHashtags = hashtags || context.defaultHashtags || [];
+  const finalPreferWebShare = preferWebShare ?? context.preferNative ?? false;
+  const finalFallbackToWindow = fallbackToWindow ?? context.fallbackToWindow ?? true;
   
-  const handleShare = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    
-    // Track the share event
-    trackShare(platform, finalUrl);
-    
+  // Handle share action
+  const handleShare = async () => {
     // Prepare share options
     const shareOptions: ShareOptions = {
       url: finalUrl,
-      title,
-      text,
-      media,
-      hashtags,
+      title: finalTitle,
+      text: finalText,
+      description: finalDescription, // Add description to share options
+      media: finalMedia,
+      hashtags: finalHashtags,
       via,
-      summary,
+      summary: summary || finalDescription, // Use description as fallback for summary
       source,
       preferWebShare: finalPreferWebShare,
-      fallbackToWindow: finalFallbackToWindow
+      fallbackToWindow: finalFallbackToWindow,
+      onShareComplete: (result: { success: boolean; platform: string }) => {
+        if (onShareComplete) {
+          onShareComplete(result);
+        }
+        if (context.onShareComplete) {
+          context.onShareComplete(result);
+        }
+        
+        trackShare({
+          platform,
+          url: finalUrl,
+          success: result.success,
+          title: finalTitle
+        });
+      }
     };
     
-    try {
-      // Perform the share
-      const success = await share(platform, shareOptions);
-      
-      // Call onShareComplete callback
-      const completeCallback = onShareComplete || context.onShareComplete;
-      if (completeCallback) {
-        completeCallback({ success, platform });
-      }
-    } catch (error) {
-      console.error(`Error sharing to ${platform}:`, error);
-      
-      // Call onShareComplete callback with failure
-      const completeCallback = onShareComplete || context.onShareComplete;
-      if (completeCallback) {
-        completeCallback({ success: false, platform });
-      }
+    await share(platform, shareOptions);
+  };
+  
+  // Get platform config from context
+  const platformConfig = context.theme.platforms[platform] || { name: platform, color: '#333' };
+  
+  // Determine button styles based on variant, size, and shape
+  const buttonSizes = {
+    small: { padding: showText ? '6px 12px' : '8px', fontSize: '12px' },
+    medium: { padding: showText ? '8px 16px' : '10px', fontSize: '14px' },
+    large: { padding: showText ? '10px 20px' : '12px', fontSize: '16px' }
+  };
+  
+  const buttonVariants = {
+    solid: { 
+      backgroundColor: showText ? platformConfig.color : 'transparent', 
+      color: showText ? '#fff' : platformConfig.color, 
+      border: 'none' 
+    },
+    outline: { 
+      backgroundColor: 'transparent', 
+      color: platformConfig.color, 
+      border: showText ? `1px solid ${platformConfig.color}` : 'none' 
+    },
+    text: { 
+      backgroundColor: 'transparent', 
+      color: platformConfig.color, 
+      border: 'none' 
     }
   };
   
-  // Generate dynamic styles based on props and theme
-  const { theme } = context;
-  const platformConfig = theme.platforms[platform] || {};
-  
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return { padding: '6px 12px', fontSize: '0.875rem' };
-      case 'large':
-        return { padding: '12px 24px', fontSize: '1.125rem' };
-      default:
-        return { padding: '8px 16px', fontSize: '1rem' };
-    }
-  };
-  
-  const getVariantStyles = () => {
-    const color = platformConfig.color || '#6c757d';
-    
-    switch (variant) {
-      case 'outline':
-        return {
-          backgroundColor: 'transparent',
-          color,
-          border: `1px solid ${color}`
-        };
-      case 'text':
-        return {
-          backgroundColor: 'transparent',
-          color,
-          border: 'none'
-        };
-      default:
-        return {
-          backgroundColor: color,
-          color: '#fff',
-          border: 'none'
-        };
-    }
-  };
-  
-  const getShapeStyles = () => {
-    switch (shape) {
-      case 'square':
-        return { borderRadius: '0' };
-      case 'pill':
-        return { borderRadius: '9999px' };
-      default:
-        return { borderRadius: '4px' };
-    }
+  const buttonShapes = {
+    square: { borderRadius: '0' },
+    rounded: { borderRadius: context.theme.button.borderRadius },
+    pill: { borderRadius: '9999px' }
   };
   
   const buttonStyles = {
+    ...buttonSizes[size],
+    ...buttonVariants[variant],
+    ...buttonShapes[shape],
+    fontFamily: context.theme.button.fontFamily,
+    fontWeight: context.theme.button.fontWeight,
+    transition: context.theme.button.transition,
+    cursor: 'pointer',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.6 : 1,
-    ...getSizeStyles(),
-    ...getVariantStyles(),
-    ...getShapeStyles(),
+    textDecoration: 'none',
     ...buttonStyle
   };
   
-  // If we're in React Native, we should use the native components
-  if (isReactNativeAvailable()) {
-    // This is just a placeholder - in a real implementation,
-    // we would dynamically import the appropriate native component
-    console.warn('React Native implementation should be used. Please import the native component directly.');
-    return null;
-  }
+  // Get the appropriate icon based on platform
+  const getIconForPlatform = () => {
+    // Use iconSize prop if provided, otherwise use size-based dimensions
+    const iconDimension = iconSize || (size === 'small' ? 16 : size === 'medium' ? 20 : 24);
+    
+    const iconProps = { 
+      size: iconDimension,
+      color: showText && variant === 'solid' ? '#fff' : platformConfig.color
+    };
+    
+    switch (platform) {
+      case 'facebook':
+        return <FacebookIcon {...iconProps} />;
+      case 'twitter':
+        return <TwitterIcon {...iconProps} />;
+      case 'linkedin':
+        return <LinkedInIcon {...iconProps} />;
+      case 'whatsapp':
+        return <WhatsAppIcon {...iconProps} />;
+      case 'telegram':
+        return <TelegramIcon {...iconProps} />;
+      case 'email':
+        return <EmailIcon {...iconProps} />;
+      case 'reddit':
+        return <RedditIcon {...iconProps} />;
+      case 'pinterest':
+        return <PinterestIcon {...iconProps} />;
+      case 'copy':
+        return <CopyIcon {...iconProps} />;
+      default:
+        return null;
+    }
+  };
   
   // Default text based on platform
   const defaultText = platformConfig.name ? `Share on ${platformConfig.name}` : `Share on ${platform}`;
   
   return (
     <button
-      className={`share-button share-button-${platform} ${className}`}
-      style={{ ...buttonStyles, ...style }}
+      className={`share-button share-button-${platform} ${!showText ? 'share-button-icon-only' : ''} ${className}`}
+      style={{ 
+        ...buttonStyles, 
+        ...(!showText ? {
+          minWidth: 'auto',
+          boxShadow: 'none'
+        } : {}),
+        ...style 
+      }}
       onClick={handleShare}
       disabled={disabled}
       aria-label={defaultText}
     >
       {children || (
         <>
-          {icon && <span style={{ marginRight: '8px', ...iconStyle }}>{icon}</span>}
-          <span style={textStyle}>{buttonText || defaultText}</span>
-          {showCount && <span style={{ marginLeft: '8px', ...textStyle }}>0</span>}
+          {icon || getIconForPlatform()}
+          {showText && (
+            <>
+              <span style={{ marginLeft: '8px', ...textStyle }}>{text || defaultText}</span>
+              {showCount && <span style={{ marginLeft: '8px', ...textStyle }}>0</span>}
+            </>
+          )}
         </>
       )}
     </button>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+

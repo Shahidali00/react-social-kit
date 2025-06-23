@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { useShareContext } from '../context/ShareContext';
 import { useShareTracking } from '../hooks/useShareTracking';
+import { Theme } from '../utils/theme';
 
 export interface ShareButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   platform: string;
@@ -19,6 +20,10 @@ export interface ShareButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLBu
   showCount?: boolean;
 }
 
+type ButtonSize = 'small' | 'medium' | 'large';
+type ButtonVariant = 'solid' | 'outline' | 'text';
+type ButtonShape = 'square' | 'rounded' | 'pill';
+
 export const ShareButton = forwardRef<HTMLButtonElement, ShareButtonProps>(({
   platform,
   url,
@@ -36,7 +41,7 @@ export const ShareButton = forwardRef<HTMLButtonElement, ShareButtonProps>(({
   disabled = false,
   ...rest
 }, ref) => {
-  const { theme, defaultUrl } = useShareContext();
+  const { theme, defaultUrl, defaultTitle } = useShareContext();
   const { trackShare } = useShareTracking();
   const finalUrl = url || defaultUrl || (typeof window !== 'undefined' ? window.location.href : '');
   
@@ -45,7 +50,12 @@ export const ShareButton = forwardRef<HTMLButtonElement, ShareButtonProps>(({
       onClick(e);
     }
     
-    trackShare(platform, finalUrl);
+    trackShare({
+      platform,
+      url: finalUrl,
+      success: true,
+      title: title || defaultTitle || ''
+    });
     
     try {
       // Share logic here
@@ -61,9 +71,9 @@ export const ShareButton = forwardRef<HTMLButtonElement, ShareButtonProps>(({
   
   // Generate dynamic styles based on props
   const buttonStyles = {
-    ...getButtonSizeStyles(size),
-    ...getButtonVariantStyles(variant, platform, theme),
-    ...getButtonShapeStyles(shape),
+    ...getButtonSizeStyles(size as ButtonSize),
+    ...getButtonVariantStyles(variant as ButtonVariant, platform, theme),
+    ...getButtonShapeStyles(shape as ButtonShape),
     ...style
   };
   
@@ -92,43 +102,61 @@ const ShareCount = ({ url, platform }: { url: string; platform: string }) => {
   return <span className="share-count">0</span>;
 };
 
-const getButtonSizeStyles = (size: string): React.CSSProperties => {
-  switch (size) {
-    case 'small': return { padding: '6px 12px', fontSize: '0.875rem' };
-    case 'large': return { padding: '12px 24px', fontSize: '1.125rem' };
-    default: return { padding: '8px 16px', fontSize: '1rem' };
-  }
+// Helper functions for styles
+interface SizeStyles {
+  padding: string;
+  fontSize: string;
+}
+
+const getButtonSizeStyles = (size: ButtonSize): SizeStyles => {
+  const sizes: Record<ButtonSize, SizeStyles> = {
+    small: { padding: '6px 12px', fontSize: '12px' },
+    medium: { padding: '8px 16px', fontSize: '14px' },
+    large: { padding: '10px 20px', fontSize: '16px' }
+  };
+  return sizes[size];
 };
 
-const getButtonVariantStyles = (variant: string, platform: string, theme: any): React.CSSProperties => {
-  const color = theme?.[platform.toLowerCase()] || '#333';
+interface VariantStyles {
+  backgroundColor: string;
+  color: string;
+  border: string;
+}
+
+const getButtonVariantStyles = (variant: ButtonVariant, platform: string, theme: Theme): VariantStyles => {
+  const platformConfig = theme.platforms[platform] || { color: '#333' };
   
-  switch (variant) {
-    case 'outline':
-      return { 
-        backgroundColor: 'transparent', 
-        color, 
-        border: `1px solid ${color}` 
-      };
-    case 'text':
-      return { 
-        backgroundColor: 'transparent', 
-        color, 
-        border: 'none' 
-      };
-    default:
-      return { 
-        backgroundColor: color, 
-        color: theme?.buttonText || '#fff', 
-        border: 'none' 
-      };
-  }
+  const variants: Record<ButtonVariant, VariantStyles> = {
+    solid: { 
+      backgroundColor: platformConfig.color, 
+      color: '#fff', 
+      border: 'none' 
+    },
+    outline: { 
+      backgroundColor: 'transparent', 
+      color: platformConfig.color, 
+      border: `1px solid ${platformConfig.color}` 
+    },
+    text: { 
+      backgroundColor: 'transparent', 
+      color: platformConfig.color, 
+      border: 'none' 
+    }
+  };
+  return variants[variant];
 };
 
-const getButtonShapeStyles = (shape: string): React.CSSProperties => {
-  switch (shape) {
-    case 'square': return { borderRadius: '0' };
-    case 'pill': return { borderRadius: '9999px' };
-    default: return { borderRadius: '6px' };
-  }
+interface ShapeStyles {
+  borderRadius: string;
+}
+
+const getButtonShapeStyles = (shape: ButtonShape): ShapeStyles => {
+  const shapes: Record<ButtonShape, ShapeStyles> = {
+    square: { borderRadius: '0' },
+    rounded: { borderRadius: '4px' },
+    pill: { borderRadius: '9999px' }
+  };
+  return shapes[shape];
 };
+
+

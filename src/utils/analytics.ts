@@ -14,68 +14,77 @@ export interface ShareEventData {
   timestamp: number;
 }
 
+// Define window with the properties we need
+interface CustomWindow extends Window {
+  gtag?: (command: string, action: string, params: any) => void;
+  dataLayer?: any[];
+  analytics?: {
+    track: (event: string, properties?: any) => void;
+  };
+}
+
 export const trackShareEvent = (config: AnalyticsConfig, data: ShareEventData): void => {
   if (typeof window === 'undefined') {
     return;
   }
 
+  // Use type assertion to tell TypeScript about our custom properties
+  const customWindow = window as CustomWindow;
+  
   const { provider, trackingId, customTracker } = config;
   
-  try {
-    switch (provider) {
-      case 'ga':
-        if ('gtag' in window) {
-          (window as any).gtag('event', 'share', {
-            event_category: 'Social',
-            event_label: data.platform,
-            method: data.method,
-            url: data.url,
-            title: data.title
-          });
-        }
-        break;
-        
-      case 'gtm':
-        if ('dataLayer' in window) {
-          (window as any).dataLayer.push({
-            event: 'social_share',
-            socialNetwork: data.platform,
-            socialAction: 'share',
-            socialTarget: data.url,
-            shareMethod: data.method
-          });
-        }
-        break;
-        
-      case 'segment':
-        if ('analytics' in window) {
-          (window as any).analytics.track('Share', {
-            platform: data.platform,
-            url: data.url,
-            title: data.title,
-            method: data.method
-          });
-        }
-        break;
-        
-      case 'custom':
-        if (customTracker) {
-          customTracker('share', data);
-        }
-        break;
-    }
-  } catch (error) {
-    console.warn('Error tracking share event:', error);
+  // Format the event data
+  const eventData = {
+    category: 'Social Share',
+    action: `share_${data.platform}`,
+    label: data.url,
+    value: 1,
+    ...data
+  };
+
+  // Track based on provider
+  switch (provider) {
+    case 'ga':
+      if (customWindow.gtag && trackingId) {
+        customWindow.gtag('event', 'share', {
+          method: data.platform,
+          content_type: 'page',
+          content_id: data.url,
+          title: data.title || ''
+        });
+      }
+      break;
+    
+    case 'gtm':
+      if (customWindow.dataLayer) {
+        customWindow.dataLayer.push({
+          event: 'social_share',
+          socialNetwork: data.platform,
+          socialAction: 'share',
+          socialTarget: data.url
+        });
+      }
+      break;
+    
+    case 'segment':
+      if (customWindow.analytics) {
+        customWindow.analytics.track('Share', {
+          platform: data.platform,
+          url: data.url,
+          title: data.title,
+          method: data.method
+        });
+      }
+      break;
+    
+    case 'custom':
+      if (customTracker) {
+        customTracker('share', eventData);
+      }
+      break;
   }
 };
 
-// Add this to global.d.ts or a similar file
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-    dataLayer?: any[];
-    analytics?: {
-      track: (event: string, properties?: any) => void;
-    };
-  }
-}
+
+
+

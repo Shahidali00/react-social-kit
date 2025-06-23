@@ -1,11 +1,13 @@
+// Global type declarations for window objects
 interface Window {
-  gtag?: (...args: any[]) => void;
+  gtag?: (command: string, action: string, params: any) => void;
   dataLayer?: any[];
   analytics?: {
     track: (event: string, properties?: any) => void;
   };
 }
 
+// Global type declarations for navigator
 interface Navigator {
   share?: (data: {
     url?: string;
@@ -16,10 +18,13 @@ interface Navigator {
   canShare?: (data: { files: File[] }) => boolean;
 }
 
-// Add global object declaration for React Native environment detection
+// Global object for React Native environment detection
 interface Global {
   ReactNative?: any;
   HermesInternal?: any;
 }
 
 declare var global: Global;
+
+
+

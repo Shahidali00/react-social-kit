@@ -4,19 +4,27 @@ export interface EmailShareProps {
   url: string;
   subject?: string;
   body?: string;
+  description?: string; // Add description prop
   separator?: string;
 }
 
 export const EmailShare: React.FC<EmailShareProps> = ({ 
   url, 
   subject = 'Check out this link', 
-  body = '', 
+  body = '',
+  description = '', // Add description with default empty string
   separator = '\n\n' 
 }) => {
   const mailtoUrl = new URL('mailto:');
   mailtoUrl.searchParams.append('subject', subject);
   
-  const emailBody = body ? `${body}${separator}${url}` : url;
+  // Use description if available, otherwise fall back to body
+  const emailBody = description 
+    ? `${description}${separator}${url}` 
+    : body 
+      ? `${body}${separator}${url}` 
+      : url;
+      
   mailtoUrl.searchParams.append('body', emailBody);
 
   return (

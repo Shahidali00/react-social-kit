@@ -1,25 +1,17 @@
-import React from 'react';
-
 export interface ThemeColors {
   primary: string;
   secondary: string;
-  success: string;
-  danger: string;
-  warning: string;
-  info: string;
-  light: string;
-  dark: string;
+  text: string;
+  background: string;
 }
 
 export interface PlatformTheme {
   name: string;
   color: string;
-  icon?: React.ReactNode;
-  hoverColor?: string;
-  activeColor?: string;
 }
 
 export interface Theme {
+  colors: ThemeColors;
   platforms: Record<string, PlatformTheme>;
   button: {
     borderRadius: string;
@@ -28,131 +20,82 @@ export interface Theme {
     fontWeight: string;
     transition: string;
   };
-  sizes: {
-    small: {
-      padding: string;
-      fontSize: string;
-    };
-    medium: {
-      padding: string;
-      fontSize: string;
-    };
-    large: {
-      padding: string;
-      fontSize: string;
-    };
-  };
 }
 
 export const defaultTheme: Theme = {
+  colors: {
+    primary: '#1877f2',
+    secondary: '#f5f5f5',
+    text: '#333333',
+    background: '#ffffff'
+  },
   platforms: {
     facebook: {
       name: 'Facebook',
-      color: '#1877f2',
-      hoverColor: '#166fe5',
-      activeColor: '#125fca'
+      color: '#1877f2'
     },
     twitter: {
       name: 'Twitter',
-      color: '#1DA1F2',
-      hoverColor: '#0d95e8',
-      activeColor: '#0c85d0'
+      color: '#1DA1F2'
     },
     linkedin: {
       name: 'LinkedIn',
-      color: '#0A66C2',
-      hoverColor: '#0958a8',
-      activeColor: '#074b8a'
+      color: '#0A66C2'
     },
     pinterest: {
       name: 'Pinterest',
-      color: '#E60023',
-      hoverColor: '#d0001f',
-      activeColor: '#b7001b'
+      color: '#E60023'
     },
     reddit: {
       name: 'Reddit',
-      color: '#FF4500',
-      hoverColor: '#e63e00',
-      activeColor: '#cc3700'
+      color: '#FF4500'
     },
     whatsapp: {
       name: 'WhatsApp',
-      color: '#25D366',
-      hoverColor: '#21bd5a',
-      activeColor: '#1da74f'
+      color: '#25D366'
     },
     telegram: {
       name: 'Telegram',
-      color: '#0088cc',
-      hoverColor: '#0077b3',
-      activeColor: '#006699'
+      color: '#0088cc'
     },
     email: {
       name: 'Email',
-      color: '#D44638',
-      hoverColor: '#c13e31',
-      activeColor: '#ad372c'
+      color: '#D44638'
     },
     slack: {
       name: 'Slack',
-      color: '#4A154B',
-      hoverColor: '#3e1240',
-      activeColor: '#320f34'
+      color: '#4A154B'
     },
     tumblr: {
       name: 'Tumblr',
-      color: '#36465D',
-      hoverColor: '#2e3c4f',
-      activeColor: '#263242'
-    },
-    copy: {
-      name: 'Copy Link',
-      color: '#6c757d',
-      hoverColor: '#5a6268',
-      activeColor: '#4e555b'
+      color: '#36465D'
     }
   },
   button: {
     borderRadius: '4px',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    fontFamily: 'Arial, sans-serif',
     fontSize: '14px',
-    fontWeight: '500',
-    transition: 'all 0.2s ease-in-out'
-  },
-  sizes: {
-    small: {
-      padding: '6px 12px',
-      fontSize: '12px'
-    },
-    medium: {
-      padding: '8px 16px',
-      fontSize: '14px'
-    },
-    large: {
-      padding: '12px 24px',
-      fontSize: '16px'
-    }
+    fontWeight: '400',
+    transition: 'all 0.3s ease'
   }
 };
 
 export const createTheme = (customTheme: Partial<Theme>): Theme => {
   return {
-    ...defaultTheme,
-    ...customTheme,
+    colors: {
+      ...defaultTheme.colors,
+      ...customTheme.colors
+    },
     platforms: {
       ...defaultTheme.platforms,
-      ...(customTheme.platforms || {})
+      ...customTheme.platforms
     },
     button: {
       ...defaultTheme.button,
-      ...(customTheme.button || {})
-    },
-    sizes: {
-      ...defaultTheme.sizes,
-      ...(customTheme.sizes || {})
+      ...customTheme.button
     }
   };
 };
+
 
 

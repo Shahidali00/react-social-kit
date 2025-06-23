@@ -1,57 +1,46 @@
-import { useCallback } from 'react';
 import { useShareContext } from '../context/ShareContext';
-
-interface ShareEvent {
-  platform: string;
-  url: string;
-  timestamp: number;
-}
+import { trackShareEvent, AnalyticsConfig, ShareEventData } from '../utils/analytics';
 
 export interface UseShareTrackingOptions {
-  onShare?: (event: ShareEvent) => void;
-  trackingId?: string;
+  method?: 'button' | 'webshare' | 'native';
+}
+
+export interface ShareTrackingData {
+  platform: string;
+  url: string;
+  success: boolean;
+  title?: string;
 }
 
 export const useShareTracking = (options: UseShareTrackingOptions = {}) => {
-  const context = useShareContext();
-  const { onShare } = options;
-  const trackingId = options.trackingId || context.trackingId;
-  
-  const trackShare = useCallback((platform: string, url: string) => {
-    const event: ShareEvent = {
-      platform,
-      url,
+  const { analytics, trackingId } = useShareContext();
+  const { method = 'button' } = options;
+
+  const trackShare = (data: ShareTrackingData) => {
+    if (!analytics && !trackingId) return;
+
+    // Create analytics config
+    const config: AnalyticsConfig = {
+      provider: analytics?.provider || 'ga',
+      trackingId: trackingId || analytics?.trackingId,
+      customTracker: analytics?.customTracker
+    };
+
+    // Create share event data
+    const shareData: ShareEventData = {
+      platform: data.platform,
+      url: data.url,
+      title: data.title,
+      method,
       timestamp: Date.now()
     };
-    
-    if (onShare) {
-      onShare(event);
-    }
-    
-    if (trackingId && typeof window !== 'undefined') {
-      // Example: Send to analytics service
-      try {
-        if (window.gtag) {
-          window.gtag('event', 'share', {
-            method: platform,
-            content_type: 'url',
-            content_id: url
-          });
-        }
-      } catch (error) {
-        console.warn('Error tracking share event:', error);
-      }
-    }
-    
-    return event;
-  }, [onShare, trackingId]);
-  
+
+    // Track the event
+    trackShareEvent(config, shareData);
+  };
+
   return { trackShare };
 };
 
-// Add this to global.d.ts or a similar file
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-  }
-}
+
+

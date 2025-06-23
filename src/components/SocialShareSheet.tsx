@@ -15,8 +15,10 @@ export interface SocialShareSheetProps {
   className?: string;
   style?: React.CSSProperties;
   buttonSize?: 'small' | 'medium' | 'large';
+  iconSize?: number;
   buttonVariant?: 'solid' | 'outline' | 'text';
   buttonShape?: 'square' | 'rounded' | 'pill';
+  showText?: boolean;
 }
 
 export const SocialShareSheet: React.FC<SocialShareSheetProps> = ({
@@ -26,59 +28,64 @@ export const SocialShareSheet: React.FC<SocialShareSheetProps> = ({
   media = '',
   hashtags = [],
   via = '',
-  platforms = ['facebook', 'twitter', 'linkedin', 'pinterest', 'reddit', 'whatsapp', 'telegram', 'email', 'copy'],
+  platforms = ['facebook', 'twitter', 'linkedin', 'pinterest', 'reddit', 'whatsapp', 'telegram', 'email', 'slack', 'tumblr'],
   onShareComplete,
   className = '',
   style = {},
   buttonSize = 'medium',
+  iconSize,
   buttonVariant = 'solid',
-  buttonShape = 'rounded'
+  buttonShape = 'rounded',
+  showText = false
 }) => {
-  const { defaultUrl } = useShareContext();
+  const { defaultUrl, defaultTitle, defaultDescription, defaultMedia, defaultHashtags } = useShareContext();
+  
+  // Get final values with proper fallbacks
   const finalUrl = url || defaultUrl || (typeof window !== 'undefined' ? window.location.href : '');
+  const finalTitle = title || defaultTitle || '';
+  const finalDescription = description || defaultDescription || '';
+  const finalMedia = media || defaultMedia || '';
+  const finalHashtags = hashtags?.length ? hashtags : defaultHashtags || [];
   
   const defaultStyle: React.CSSProperties = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '10px',
+    justifyContent: 'center',
     ...style
   };
-
+  
   return (
     <div className={`social-share-sheet ${className}`} style={defaultStyle}>
-      {platforms.map(platform => {
-        if (platform === 'copy') {
-          return (
-            <CopyLinkButton 
-              key="copy" 
-              url={finalUrl}
-              onShareComplete={onShareComplete}
-              className={`share-button-${buttonSize} share-button-${buttonVariant} share-button-${buttonShape}`}
-              size={buttonSize}
-              variant={buttonVariant}
-              shape={buttonShape}
-            />
-          );
-        }
-        
-        return (
-          <Share
-            key={platform}
-            platform={platform}
-            url={finalUrl}
-            title={title}
-            text={description}
-            media={media}
-            hashtags={hashtags}
-            via={via}
-            onShareComplete={onShareComplete}
-            size={buttonSize}
-            variant={buttonVariant}
-            shape={buttonShape}
-          />
-        );
-      })}
+      {platforms.map((platform) => (
+        <Share
+          key={platform}
+          platform={platform}
+          url={finalUrl}
+          title={finalTitle}
+          description={finalDescription}
+          text={finalDescription}
+          media={finalMedia}
+          hashtags={finalHashtags}
+          via={via}
+          size={buttonSize}
+          iconSize={iconSize}
+          variant={buttonVariant}
+          shape={buttonShape}
+          showText={showText}
+          onShareComplete={onShareComplete}
+        />
+      ))}
     </div>
   );
 };
+
+
+
+
+
+
+
+
+
 

@@ -26,6 +26,10 @@ export { RedditShareNative } from './native/RedditShareNative';
 export { EmailShareNative } from './native/EmailShareNative';
 export { SlackShareNative } from './native/SlackShareNative';
 
+// Context and Hooks
+export { ShareProvider, useShareContext } from './context/ShareContext';
+export { useShareTracking } from './hooks/useShareTracking';
+
 // Utilities
 export { createTheme, defaultTheme } from './utils/theme';
 export { share, platforms } from './utils/shareApi';
@@ -35,18 +39,16 @@ export { deepLinks } from './utils/deepLinks';
 export { isReactNativeAvailable, getReactNativeComponents } from './utils/platform';
 export { isBrowser, isNode, isReactNative, getPlatform } from './utils/environment';
 
-// Types - Use export type for all type exports
-export type { ThemeColors, PlatformTheme, Theme } from './utils/theme';
-export type { ShareOptions, PlatformShareConfig } from './utils/shareApi';
-export type { WebShareData } from './utils/webShare';
-export type { AnalyticsProvider, AnalyticsConfig, ShareEventData } from './utils/analytics';
-export type { DeepLinkOptions } from './utils/deepLinks';
-
-// Hooks
-export { useShareTracking } from './hooks/useShareTracking';
+// Types
+export type { ShareOptions } from './utils/shareApi';
+export type { Theme, PlatformTheme, ThemeColors } from './utils/theme';
+export type { ShareContextProps, ShareProviderProps } from './context/ShareContext';
+export type { AnalyticsConfig, ShareEventData } from './utils/analytics';
 export type { UseShareTrackingOptions } from './hooks/useShareTracking';
 
-// Context
-export { ShareProvider, useShareContext } from './context/ShareContext';
-export type { ShareProviderProps } from './context/ShareContext';
+// // Hooks
+// export type { UseShareTrackingOptions } from './hooks/useShareTracking';
+
+// // Context
+// export type { ShareProviderProps } from './context/ShareContext';
 

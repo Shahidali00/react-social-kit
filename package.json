@@ -1,66 +1,54 @@
 {
   "name": "react-social-kit",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "The most comprehensive and customizable social sharing library for React",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./nextjs": {
+      "import": "./dist/nextjs/index.esm.js",
+      "require": "./dist/nextjs/index.js",
+      "types": "./dist/nextjs/index.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "lint": "eslint src --ext .ts,.tsx",
-    "test": "jest",
-    "prepublishOnly": "npm run build",
-    "install-node-types": "npm install --save-dev @types/node"
-  },
-  "keywords": [
-    "react",
-    "share",
-    "social",
-    "facebook",
-    "twitter",
-    "linkedin",
-    "pinterest",
-    "reddit"
-  ],
-  "author": "Your Name",
-  "license": "MIT",
-  "peerDependencies": {
-    "react": ">=17.0.0",
-    "react-dom": ">=17.0.0",
-    "react-native": ">=0.60.0"
+    "clean": "node -e \"if(require('fs').existsSync('dist')) require('fs').rmSync('dist', {recursive: true})\"",
+    "build": "npm run clean && tsc -p tsconfig.build.json && rollup -c"
   },
   "dependencies": {
-    "react-compiler-runtime": "^1.0.0"
+    "tslib": "^2.6.2"
   },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "sideEffects": false,
   "devDependencies": {
-    "@babel/core": "^7.22.0",
-    "@babel/preset-env": "^7.22.0",
-    "@babel/preset-react": "^7.22.0",
-    "@babel/preset-typescript": "^7.22.0",
-    "@rollup/plugin-babel": "^6.0.0",
-    "@rollup/plugin-commonjs": "^25.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "@rollup/plugin-typescript": "^11.0.0",
-    "@types/jest": "^29.5.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@types/react-native": "^0.72.0",
-    "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^8.40.0",
-    "eslint-plugin-react": "^7.32.0",
-    "eslint-plugin-react-compiler": "^1.0.0",
-    "jest": "^29.5.0",
-    "rollup": "^3.20.0",
-    "rollup-plugin-dts": "^5.3.0",
-    "rollup-plugin-peer-deps-external": "^2.2.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "typescript": "^5.0.0"
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-replace": "^6.0.2",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.3",
+    "@types/node": "^24.0.3",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "rollup": "^4.44.0",
+    "rollup-plugin-dts": "^6.2.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "typescript": "^5.8.3"
   }
 }
-
 
 
 

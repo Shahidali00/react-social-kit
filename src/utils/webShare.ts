@@ -1,14 +1,6 @@
-export interface WebShareData {
-  url?: string;
-  title?: string;
-  text?: string;
-  files?: File[];
-}
-
 export const canUseWebShare = (): boolean => {
-  return typeof navigator !== 'undefined' &&
-         'share' in navigator &&
-         typeof navigator.share === 'function';
+  if (typeof navigator === 'undefined') return false;
+  return !!navigator.share;
 };
 
 export const canUseWebShareFiles = (): boolean => {
@@ -17,48 +9,26 @@ export const canUseWebShareFiles = (): boolean => {
          typeof navigator.canShare === 'function';
 };
 
-export const shareViaWebAPI = async (data: WebShareData): Promise<boolean> => {
-  if (!canUseWebShare()) {
-    return false;
-  }
+export const shareViaWebAPI = async (data: {
+  url?: string;
+  title?: string;
+  text?: string;
+  files?: File[];
+}): Promise<boolean> => {
+  if (!canUseWebShare()) return false;
   
   try {
-    if (data.files && data.files.length > 0) {
-      if (canUseWebShareFiles() && navigator.canShare?.({ files: data.files })) {
-        const shareDataWithFiles: ShareData = {
-          files: data.files,
-          title: data.title,
-          text: data.text,
-          url: data.url
-        };
-        await navigator.share?.(shareDataWithFiles);
-        return true;
-      }
-      // Fall back to sharing without files
-      const { files, ...shareData } = data;
-      const shareDataWithoutFiles: ShareData = {
-        title: shareData.title,
-        text: shareData.text,
-        url: shareData.url
-      };
-      await navigator.share?.(shareDataWithoutFiles);
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      await navigator.share(data);
       return true;
     }
-
-    const shareDataFinal: ShareData = {
-      title: data.title,
-      text: data.text,
-      url: data.url
-    };
-    await navigator.share?.(shareDataFinal);
-    return true;
+    return false;
   } catch (error) {
-    if (error instanceof Error && error.name !== 'AbortError') {
-      console.error('Error sharing:', error);
-    }
+    console.error('Error sharing via Web API:', error);
     return false;
   }
 };
+
 
 
 

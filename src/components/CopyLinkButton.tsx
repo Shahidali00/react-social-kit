@@ -1,168 +1,156 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useShareContext } from '../context/ShareContext';
 import { useShareTracking } from '../hooks/useShareTracking';
+import { CopyIcon, CheckIcon } from '../utils/icons';
 
 export interface CopyLinkButtonProps {
-  url?: string;
-  children?: React.ReactNode;
+  url: string;
   className?: string;
   style?: React.CSSProperties;
-  onShareComplete?: (result: { success: boolean; platform: string }) => void;
-  copiedText?: string;
-  copiedDuration?: number;
   size?: 'small' | 'medium' | 'large';
+  iconSize?: number; // New prop for custom icon size
   variant?: 'solid' | 'outline' | 'text';
   shape?: 'square' | 'rounded' | 'pill';
+  showText?: boolean; // Changed from iconOnly to showText
+  onShareComplete?: (result: { success: boolean; platform: string }) => void;
 }
 
 export const CopyLinkButton: React.FC<CopyLinkButtonProps> = ({
   url,
-  children,
   className = '',
   style,
-  onShareComplete,
-  copiedText = 'Copied!',
-  copiedDuration = 2000,
   size = 'medium',
+  iconSize, // New prop for custom icon size
   variant = 'solid',
-  shape = 'rounded'
+  shape = 'rounded',
+  showText = false, // Default to false (icon-only)
+  onShareComplete
 }) => {
   const [copied, setCopied] = useState(false);
-  const { defaultUrl, theme } = useShareContext();
+  const context = useShareContext();
   const { trackShare } = useShareTracking();
   
-  const finalUrl = url || defaultUrl || (typeof window !== 'undefined' ? window.location.href : '');
-  
-  useEffect(() => {
-    if (copied) {
-      const timer = setTimeout(() => {
-        setCopied(false);
-      }, copiedDuration);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [copied, copiedDuration]);
+  const finalUrl = url || context.defaultUrl || (typeof window !== 'undefined' ? window.location.href : '');
   
   const handleCopy = async () => {
     try {
-      // Track the share event
-      trackShare('copy', finalUrl);
+      await navigator.clipboard.writeText(finalUrl);
+      setCopied(true);
       
-      // Use the Clipboard API
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(finalUrl);
-        setCopied(true);
-        
-        if (onShareComplete) {
-          onShareComplete({ success: true, platform: 'copy' });
-        }
-      } else {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = finalUrl;
-        textArea.style.position = 'fixed';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        
-        try {
-          const successful = document.execCommand('copy');
-          setCopied(successful);
-          
-          if (onShareComplete) {
-            onShareComplete({ success: successful, platform: 'copy' });
-          }
-        } catch (err) {
-          console.error('Fallback: Oops, unable to copy', err);
-          
-          if (onShareComplete) {
-            onShareComplete({ success: false, platform: 'copy' });
-          }
-        }
-        
-        document.body.removeChild(textArea);
+      if (onShareComplete) {
+        onShareComplete({ success: true, platform: 'copy' });
+      } else if (context.onShareComplete) {
+        context.onShareComplete({ success: true, platform: 'copy' });
       }
+      
+      trackShare({
+        platform: 'copy',
+        url: finalUrl,
+        success: true,
+        title: context.defaultTitle || ''
+      });
+      
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
     } catch (error) {
-      console.error('Error copying to clipboard:', error);
+      console.error('Failed to copy:', error);
       
       if (onShareComplete) {
         onShareComplete({ success: false, platform: 'copy' });
+      } else if (context.onShareComplete) {
+        context.onShareComplete({ success: false, platform: 'copy' });
       }
+      
+      trackShare({
+        platform: 'copy',
+        url: finalUrl,
+        success: false,
+        title: context.defaultTitle || ''
+      });
     }
   };
   
-  // Generate dynamic styles based on props and theme
-  const platformConfig = theme.platforms.copy || {};
+  // Determine button styles based on variant, size, and shape
+  const buttonSizes = {
+    small: { padding: showText ? '6px 12px' : '8px', fontSize: '12px' },
+    medium: { padding: showText ? '8px 16px' : '10px', fontSize: '14px' },
+    large: { padding: showText ? '10px 20px' : '12px', fontSize: '16px' }
+  };
   
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return { padding: '6px 12px', fontSize: '0.875rem' };
-      case 'large':
-        return { padding: '12px 24px', fontSize: '1.125rem' };
-      default:
-        return { padding: '8px 16px', fontSize: '1rem' };
+  const buttonVariants = {
+    solid: { 
+      backgroundColor: showText ? '#6c757d' : 'transparent', 
+      color: showText ? '#fff' : '#6c757d', 
+      border: 'none' 
+    },
+    outline: { 
+      backgroundColor: 'transparent', 
+      color: '#6c757d', 
+      border: showText ? '1px solid #6c757d' : 'none' 
+    },
+    text: { 
+      backgroundColor: 'transparent', 
+      color: '#6c757d', 
+      border: 'none' 
     }
   };
   
-  const getVariantStyles = () => {
-    const color = platformConfig.color || '#6c757d';
-    
-    switch (variant) {
-      case 'outline':
-        return {
-          backgroundColor: 'transparent',
-          color,
-          border: `1px solid ${color}`
-        };
-      case 'text':
-        return {
-          backgroundColor: 'transparent',
-          color,
-          border: 'none'
-        };
-      default:
-        return {
-          backgroundColor: color,
-          color: '#fff',
-          border: 'none'
-        };
-    }
-  };
-  
-  const getShapeStyles = () => {
-    switch (shape) {
-      case 'square':
-        return { borderRadius: '0' };
-      case 'pill':
-        return { borderRadius: '9999px' };
-      default:
-        return { borderRadius: '4px' };
-    }
+  const buttonShapes = {
+    square: { borderRadius: '0' },
+    rounded: { borderRadius: context.theme.button.borderRadius },
+    pill: { borderRadius: '9999px' }
   };
   
   const buttonStyles = {
+    ...buttonSizes[size],
+    ...buttonVariants[variant],
+    ...buttonShapes[shape],
+    fontFamily: context.theme.button.fontFamily,
+    fontWeight: context.theme.button.fontWeight,
+    transition: context.theme.button.transition,
+    cursor: 'pointer',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    cursor: 'pointer',
-    ...getSizeStyles(),
-    ...getVariantStyles(),
-    ...getShapeStyles(),
     ...style
+  };
+  
+  // Use iconSize prop if provided, otherwise use size-based dimensions
+  const iconDimension = iconSize || (size === 'small' ? 16 : size === 'medium' ? 20 : 24);
+  
+  const iconProps = { 
+    size: iconDimension,
+    color: showText && variant === 'solid' ? '#fff' : '#6c757d'
   };
   
   return (
     <button
-      className={`copy-link-button ${className}`}
-      style={buttonStyles}
+      className={`copy-link-button ${className} ${!showText ? 'copy-link-button-icon-only' : ''}`}
+      style={{ 
+        ...buttonStyles, 
+        ...(!showText ? {
+          minWidth: 'auto',
+          boxShadow: 'none'
+        } : {}),
+        ...style 
+      }}
       onClick={handleCopy}
-      aria-label="Copy link to clipboard"
+      aria-label={copied ? 'Link copied!' : 'Copy link'}
     >
-      {children || (
-        <span>{copied ? copiedText : 'Copy Link'}</span>
-      )}
+      {copied ? <CheckIcon {...iconProps} /> : <CopyIcon {...iconProps} />}
+      {showText && <span style={{ marginLeft: '8px' }}>{copied ? 'Link copied!' : 'Copy link'}</span>}
     </button>
   );
 };
+
+
+
+
+
+
+
+
+
+
 
