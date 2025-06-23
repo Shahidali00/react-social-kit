@@ -2,9 +2,8 @@ import { shareViaWebAPI, canUseWebShare } from './webShare';
 
 export interface ShareOptions {
   url: string;
-  title?: string;
+  title?: string;  // Main message from user
   text?: string;
-  description?: string; // Add explicit description property
   media?: string;
   hashtags?: string[];
   via?: string;
@@ -28,22 +27,50 @@ export const platforms: Record<string, PlatformShareConfig> = {
     name: 'Facebook',
     color: '#1877f2',
     buildUrl: (options) => {
-      return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(options.url)}`;
+      const url = new URL('https://www.facebook.com/sharer/sharer.php');
+      url.searchParams.append('u', options.url);
+      
+      // Facebook doesn't support title in the URL parameters
+      // but we'll keep the basic implementation
+      return url.toString();
     },
     popupWidth: 550,
     popupHeight: 400
   },
   twitter: {
-    name: 'Twitter',
-    color: '#1DA1F2',
+    name: 'X',
+    color: '#000000',
     buildUrl: (options) => {
       const url = new URL('https://twitter.com/intent/tweet');
       url.searchParams.append('url', options.url);
       
-      // Use description as fallback for text
-      const text = options.text || options.description || '';
-      if (text) {
-        url.searchParams.append('text', text);
+      // Use title as the main message
+      if (options.title) {
+        url.searchParams.append('text', options.title);
+      }
+      
+      if (options.hashtags && options.hashtags.length > 0) {
+        url.searchParams.append('hashtags', options.hashtags.join(','));
+      }
+      
+      if (options.via) {
+        url.searchParams.append('via', options.via);
+      }
+      
+      return url.toString();
+    },
+    popupWidth: 550,
+    popupHeight: 420
+  },
+  x: {
+    name: 'X',
+    color: '#000000',
+    buildUrl: (options) => {
+      const url = new URL('https://twitter.com/intent/tweet');
+      url.searchParams.append('url', options.url);
+      
+      if (options.title) {
+        url.searchParams.append('text', options.title);
       }
       
       if (options.hashtags && options.hashtags.length > 0) {
@@ -70,10 +97,11 @@ export const platforms: Record<string, PlatformShareConfig> = {
         url.searchParams.append('title', options.title);
       }
       
-      // Use description as fallback for summary
-      const summary = options.summary || options.description || '';
-      if (summary) {
-        url.searchParams.append('summary', summary);
+      // Use title as summary if summary is not provided
+      if (options.summary) {
+        url.searchParams.append('summary', options.summary);
+      } else if (options.title) {
+        url.searchParams.append('summary', options.title);
       }
       
       if (options.source) {
@@ -108,10 +136,9 @@ export const platforms: Record<string, PlatformShareConfig> = {
       const url = new URL('https://t.me/share/url');
       url.searchParams.append('url', options.url);
       
-      // Use description as fallback for text
-      const text = options.text || options.description || options.title || '';
-      if (text) {
-        url.searchParams.append('text', text);
+      // Use title as the main message
+      if (options.title) {
+        url.searchParams.append('text', options.title);
       }
       
       return url.toString();
@@ -127,14 +154,11 @@ export const platforms: Record<string, PlatformShareConfig> = {
       url.searchParams.append('canonicalUrl', options.url);
       url.searchParams.append('posttype', 'link');
       
-      if (options.title) {
-        url.searchParams.append('title', options.title);
-      }
+      if (options.title) url.searchParams.append('title', options.title);
       
-      // Use description as caption
-      const caption = options.description || '';
-      if (caption) {
-        url.searchParams.append('caption', caption);
+      // Use title as caption
+      if (options.title) {
+        url.searchParams.append('caption', options.title);
       }
       
       return url.toString();
@@ -144,11 +168,10 @@ export const platforms: Record<string, PlatformShareConfig> = {
   },
   slack: {
     name: 'Slack',
-    color: '#4A154B',
+    color: '#000000',
     buildUrl: (options) => {
       // Slack doesn't have a direct share URL, but we can use this format
-      const text = options.description || options.title || '';
-      const message = text ? `${text} ${options.url}` : options.url;
+      const message = options.title ? `${options.title} ${options.url}` : options.url;
       return `https://slack.com/openid/share?url=${encodeURIComponent(message)}`;
     },
     popupWidth: 550,
@@ -160,10 +183,8 @@ export const platforms: Record<string, PlatformShareConfig> = {
     buildUrl: (options) => {
       const url = new URL('https://api.whatsapp.com/send');
       
-      // Use description as fallback for text
-      const text = options.description || options.text || options.title || '';
-      const message = text ? `${text} ${options.url}` : options.url;
-      
+      // Use title as the main message
+      const message = options.title ? `${options.title} ${options.url}` : options.url;
       url.searchParams.append('text', message);
       
       return url.toString();
@@ -182,10 +203,9 @@ export const platforms: Record<string, PlatformShareConfig> = {
         url.searchParams.append('media', options.media);
       }
       
-      // Use description as fallback for text
-      const description = options.description || options.text || options.title || '';
-      if (description) {
-        url.searchParams.append('description', description);
+      // Use title as description
+      if (options.title) {
+        url.searchParams.append('description', options.title);
       }
       
       return url.toString();
@@ -199,11 +219,10 @@ export const platforms: Record<string, PlatformShareConfig> = {
     buildUrl: (options) => {
       const subject = options.title || 'Check out this link';
       
-      // Use description as fallback for text
-      const body = options.description || options.text || '';
-      const message = body ? `${body}\n\n${options.url}` : options.url;
+      // Use title as the body if available
+      const body = options.title ? `${options.title}\n\n${options.url}` : options.url;
       
-      return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+      return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
   }
   // Removed copy platform
@@ -217,7 +236,6 @@ export const share = async (
     url,
     title,
     text,
-    description, // Extract description
     media,
     hashtags,
     via,
@@ -227,12 +245,6 @@ export const share = async (
     fallbackToWindow = true,
     onShareComplete
   } = options;
-  
-  // Use description as fallback for text if text is not provided
-  const finalText = text || description;
-  
-  // Use description as fallback for summary if summary is not provided
-  const finalSummary = summary || description;
   
   // Skip Web Share API for specific platforms to ensure direct sharing
   const skipWebShare = ['facebook', 'twitter', 'linkedin', 'whatsapp', 'telegram', 'pinterest', 'reddit'];
@@ -244,65 +256,70 @@ export const share = async (
         await navigator.share({
           url,
           title,
-          text: finalText || title
+          text: text || title
         });
         
         if (onShareComplete) {
-          onShareComplete({ success: true, platform: 'native' });
+          onShareComplete({
+            success: true,
+            platform: 'web-share'
+          });
         }
         
         return true;
       }
     } catch (error) {
-      console.error('Error using Web Share API:', error);
+      console.error('Error sharing via Web Share API:', error);
       
       if (onShareComplete) {
-        onShareComplete({ success: false, platform: 'native' });
+        onShareComplete({
+          success: false,
+          platform: 'web-share'
+        });
       }
       
-      // If Web Share API fails, fall back to platform-specific sharing
+      // Fall back to window.open if enabled
+      if (fallbackToWindow) {
+        return openShareWindow(platform, options);
+      }
+      
+      return false;
     }
   }
   
-  // Fall back to platform-specific sharing
+  return openShareWindow(platform, options);
+};
+
+const openShareWindow = (platform: string, options: ShareOptions): boolean => {
   const config = platforms[platform.toLowerCase()];
   if (!config) return false;
-  
+
   const shareUrl = config.buildUrl(options);
-  
-  if (fallbackToWindow && typeof window !== 'undefined') {
+
+  if (options.fallbackToWindow && typeof window !== 'undefined') {
     const width = config.popupWidth || 550;
     const height = config.popupHeight || 450;
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
-    
+
     const popup = window.open(
       shareUrl,
       `share-${platform}`,
       `width=${width},height=${height},left=${left},top=${top},location=0,menubar=0,toolbar=0,status=0,scrollbars=1,resizable=1`
     );
-    
+
     if (popup && popup.focus) {
       popup.focus();
       return true;
     }
   }
-  
+
   // Last resort: redirect
   if (typeof window !== 'undefined') {
     window.location.href = shareUrl;
   }
   return true;
 };
-
-
-
-
-
-
-
-
-
 
 
 

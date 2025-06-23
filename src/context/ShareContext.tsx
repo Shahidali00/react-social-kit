@@ -5,9 +5,8 @@ import { AnalyticsConfig } from '../utils/analytics';
 export interface ShareContextProps {
   theme: Theme;
   defaultUrl?: string;
-  defaultTitle?: string;
+  defaultTitle?: string;  // Main message from user
   defaultText?: string;
-  defaultDescription?: string; // Add default description
   defaultMedia?: string;
   defaultHashtags?: string[];
   preferNative?: boolean;
@@ -21,9 +20,8 @@ export interface ShareProviderProps {
   children: React.ReactNode;
   theme?: Partial<Theme>;
   defaultUrl?: string;
-  defaultTitle?: string;
+  defaultTitle?: string;  // Main message from user
   defaultText?: string;
-  defaultDescription?: string; // Add default description
   defaultMedia?: string;
   defaultHashtags?: string[];
   preferNative?: boolean;
@@ -45,7 +43,6 @@ export const ShareProvider: React.FC<ShareProviderProps> = ({
   defaultUrl,
   defaultTitle,
   defaultText,
-  defaultDescription, // Add default description
   defaultMedia,
   defaultHashtags,
   preferNative = false,
@@ -63,7 +60,6 @@ export const ShareProvider: React.FC<ShareProviderProps> = ({
     defaultUrl,
     defaultTitle,
     defaultText,
-    defaultDescription, // Add default description to context
     defaultMedia,
     defaultHashtags,
     preferNative,
@@ -81,6 +77,7 @@ export const ShareProvider: React.FC<ShareProviderProps> = ({
 };
 
 export const useShareContext = () => useContext(ShareContext);
+
 
 
 

@@ -12,10 +12,12 @@ export { TumblrShare } from './components/platforms/Tumblr';
 export { ShareButton } from './components/ShareButton';
 export { Share } from './components/Share';
 export { SocialShareSheet } from './components/SocialShareSheet';
-export { CopyLinkButton } from './components/CopyLinkButton';
+// Remove CopyLinkButton export
+// export { CopyLinkButton } from './components/CopyLinkButton';
 
 // Native Components
-export { CopyLinkNative } from './native/CopyLinkNative';
+// Remove CopyLinkNative export
+// export { CopyLinkNative } from './native/CopyLinkNative';
 export { SocialShareSheetNative } from './native/SocialShareSheetNative';
 export { ShareSheetNative } from './native/ShareSheetNative';
 export { FacebookShareNative } from './native/FacebookShareNative';

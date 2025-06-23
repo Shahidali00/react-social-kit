@@ -1,7 +1,5 @@
 export interface Translations {
   shareOn: string;
-  copyLink: string;
-  linkCopied: string;
   shareVia: string;
   platformNames: Record<string, string>;
 }
@@ -9,8 +7,6 @@ export interface Translations {
 export const defaultTranslations: Record<string, Translations> = {
   en: {
     shareOn: 'Share on',
-    copyLink: 'Copy Link',
-    linkCopied: 'Link copied!',
     shareVia: 'Share via',
     platformNames: {
       facebook: 'Facebook',
@@ -25,8 +21,6 @@ export const defaultTranslations: Record<string, Translations> = {
   },
   es: {
     shareOn: 'Compartir en',
-    copyLink: 'Copiar enlace',
-    linkCopied: '¡Enlace copiado!',
     shareVia: 'Compartir vía',
     platformNames: {
       facebook: 'Facebook',

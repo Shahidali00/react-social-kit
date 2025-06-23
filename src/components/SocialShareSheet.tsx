@@ -1,12 +1,11 @@
 import React from 'react';
 import { Share } from './Share';
-import { CopyLinkButton } from './CopyLinkButton';
 import { useShareContext } from '../context/ShareContext';
 
 export interface SocialShareSheetProps {
   url?: string;
   title?: string;
-  description?: string;
+  text?: string;
   media?: string;
   hashtags?: string[];
   via?: string;
@@ -24,11 +23,11 @@ export interface SocialShareSheetProps {
 export const SocialShareSheet: React.FC<SocialShareSheetProps> = ({
   url,
   title = '',
-  description = '',
+  text = '',
   media = '',
   hashtags = [],
   via = '',
-  platforms = ['facebook', 'twitter', 'linkedin', 'pinterest', 'reddit', 'whatsapp', 'telegram', 'email', 'slack', 'tumblr'],
+  platforms = ['facebook', 'twitter', 'linkedin', 'pinterest', 'reddit', 'whatsapp', 'telegram', 'email'],
   onShareComplete,
   className = '',
   style = {},
@@ -38,20 +37,20 @@ export const SocialShareSheet: React.FC<SocialShareSheetProps> = ({
   buttonShape = 'rounded',
   showText = false
 }) => {
-  const { defaultUrl, defaultTitle, defaultDescription, defaultMedia, defaultHashtags } = useShareContext();
+  const { defaultUrl, defaultTitle, defaultText, defaultMedia, defaultHashtags } = useShareContext();
   
-  // Get final values with proper fallbacks
-  const finalUrl = url || defaultUrl || (typeof window !== 'undefined' ? window.location.href : '');
+  // Get values from context if not provided as props
+  const finalUrl = url || defaultUrl || '';
   const finalTitle = title || defaultTitle || '';
-  const finalDescription = description || defaultDescription || '';
+  const finalText = text || defaultText || '';
   const finalMedia = media || defaultMedia || '';
-  const finalHashtags = hashtags?.length ? hashtags : defaultHashtags || [];
+  const finalHashtags = hashtags || defaultHashtags || [];
   
+  // Default styles for the container
   const defaultStyle: React.CSSProperties = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '10px',
-    justifyContent: 'center',
     ...style
   };
   
@@ -63,8 +62,7 @@ export const SocialShareSheet: React.FC<SocialShareSheetProps> = ({
           platform={platform}
           url={finalUrl}
           title={finalTitle}
-          description={finalDescription}
-          text={finalDescription}
+          text={finalText}
           media={finalMedia}
           hashtags={finalHashtags}
           via={via}
@@ -79,6 +77,7 @@ export const SocialShareSheet: React.FC<SocialShareSheetProps> = ({
     </div>
   );
 };
+
 
 
 

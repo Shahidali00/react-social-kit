@@ -1,6 +1,6 @@
 {
   "name": "react-social-kit",
-  "version": "1.0.6",
+  "version": "1.0.10",
   "description": "The most comprehensive and customizable social sharing library for React",
   "type": "module",
   "main": "dist/index.js",

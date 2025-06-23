@@ -56,7 +56,7 @@ function App() {
       <div style={{ display: 'flex', gap: '10px' }}>
         {/* Individual share buttons */}
         <Share platform="facebook" url="https://example.com" />
-        <Share platform="twitter" url="https://example.com" title="Check this out!" />
+        <Share platform="x" url="https://example.com" title="Check this out!" />
         <Share platform="linkedin" url="https://example.com" />
       </div>
     </ShareProvider>
@@ -93,7 +93,7 @@ The main component for all sharing functionality:
 
 // With title and description
 <Share 
-  platform="twitter" 
+  platform="x" 
   url="https://example.com" 
   title="Check this out!" 
   description="This is an amazing website you should visit"
@@ -103,7 +103,7 @@ The main component for all sharing functionality:
 
 // With text displayed
 <Share 
-  platform="twitter" 
+  platform="x" 
   url="https://example.com" 
   title="Check this out!" 
   description="This is an amazing website you should visit"
@@ -114,7 +114,7 @@ The main component for all sharing functionality:
 
 The `description` prop is used to provide additional context in the share message. Each platform uses it differently:
 
-- **Twitter**: Used as the tweet text if no `text` prop is provided
+- **X (Twitter)**: Used as the tweet text if no `text` prop is provided
 - **Facebook**: Included as the post description
 - **LinkedIn**: Used as the summary if no `summary` prop is provided
 - **WhatsApp**: Combined with the URL in the message
@@ -128,7 +128,7 @@ You can set a default description for all share components using the `ShareProvi
 ```jsx
 <ShareProvider defaultDescription="Check out this amazing content!">
   {/* All Share components will use this description unless overridden */}
-  <Share platform="twitter" url="https://example.com" />
+  <Share platform="x" url="https://example.com" />
 </ShareProvider>
 ```
 
@@ -142,7 +142,7 @@ Display multiple share options in a grid:
   url="https://example.com"
   title="Check out this site"
   description="This is an amazing website you should visit"
-  platforms={['facebook', 'twitter', 'linkedin', 'whatsapp', 'copy']}
+  platforms={['facebook', 'x', 'linkedin', 'whatsapp', 'slack']}
   iconSize={36}
 />
 
@@ -151,7 +151,7 @@ Display multiple share options in a grid:
   url="https://example.com"
   title="Check out this site"
   description="This is an amazing website you should visit"
-  platforms={['facebook', 'twitter', 'linkedin', 'whatsapp', 'copy']}
+  platforms={['facebook', 'x', 'linkedin', 'whatsapp', 'slack']}
   showText
 />
 ```
@@ -165,7 +165,7 @@ React Social Kit supports the following platforms out of the box:
 | Platform | Key | Description |
 |----------|-----|-------------|
 | Facebook | `facebook` | Share to Facebook timeline |
-| Twitter | `twitter` | Share via Twitter with optional hashtags |
+| X (Twitter) | `x` or `twitter` | Share via X with optional hashtags |
 | LinkedIn | `linkedin` | Share to LinkedIn with title and summary |
 | Pinterest | `pinterest` | Pin with image URL and description |
 | Reddit | `reddit` | Share to Reddit with title |
@@ -174,7 +174,6 @@ React Social Kit supports the following platforms out of the box:
 | Email | `email` | Share via email with subject and body |
 | Slack | `slack` | Share to Slack workspace |
 | Tumblr | `tumblr` | Share to Tumblr blog |
-| Copy Link | `copy` | Copy URL to clipboard |
 | Native | `native` | Use Web Share API when available |
 
 ## 🎨 Customization
@@ -184,7 +183,7 @@ React Social Kit supports the following platforms out of the box:
 ```jsx
 // Available variants: 'solid', 'outline', 'text'
 <Share platform="facebook" variant="solid" />
-<Share platform="twitter" variant="outline" />
+<Share platform="x" variant="outline" />
 <Share platform="linkedin" variant="text" />
 ```
 
@@ -193,7 +192,7 @@ React Social Kit supports the following platforms out of the box:
 ```jsx
 // Available sizes: 'small', 'medium', 'large'
 <Share platform="facebook" size="small" />
-<Share platform="twitter" size="medium" />
+<Share platform="x" size="medium" />
 <Share platform="linkedin" size="large" />
 ```
 
@@ -202,7 +201,7 @@ React Social Kit supports the following platforms out of the box:
 ```jsx
 // Available shapes: 'square', 'rounded', 'pill'
 <Share platform="facebook" shape="square" />
-<Share platform="twitter" shape="rounded" />
+<Share platform="x" shape="rounded" />
 <Share platform="linkedin" shape="pill" />
 ```
 
@@ -217,9 +216,9 @@ const customTheme = createTheme({
       name: 'Facebook',
       color: '#4267B2' // Custom color
     },
-    twitter: {
-      name: 'Twitter',
-      color: '#1DA1F2'
+    x: {
+      name: 'X',
+      color: '#000000'
     }
   },
   button: {
@@ -263,7 +262,7 @@ function App() {
         url="https://example.com"
         title="Amazing content"
         description="This is an amazing website you should visit"
-        platforms={['facebook', 'twitter', 'whatsapp']}
+        platforms={['facebook', 'x', 'whatsapp']}
       />
     </ShareProvider>
   );
@@ -350,7 +349,7 @@ import { ShareProvider, Share } from 'react-social-kit/nextjs';
 export default function Page() {
   return (
     <ShareProvider>
-      <Share platform="twitter" url="https://example.com" />
+      <Share platform="x" url="https://example.com" />
     </ShareProvider>
   );
 }
@@ -366,7 +365,7 @@ import { ShareProvider, Share } from 'react-social-kit';
 export default function Page() {
   return (
     <ShareProvider>
-      <Share platform="twitter" url="https://example.com" />
+      <Share platform="x" url="https://example.com" />
     </ShareProvider>
   );
 }
@@ -385,7 +384,7 @@ import { share } from 'react-social-kit';
 
 // Share programmatically
 const handleShare = async () => {
-  const result = await share('twitter', {
+  const result = await share('x', {
     url: 'https://example.com',
     title: 'Check this out!',
     description: 'This is an amazing website you should visit', // Used in the share message
@@ -398,7 +397,7 @@ const handleShare = async () => {
 };
 
 // Use in event handlers
-<button onClick={handleShare}>Share via Twitter</button>
+<button onClick={handleShare}>Share via X</button>
 ```
 
 ### Platform-Specific Sharing
@@ -406,9 +405,9 @@ const handleShare = async () => {
 Different platforms handle the `title` and `description` props differently:
 
 ```jsx
-// Twitter - Uses title and description in the tweet
+// X (Twitter) - Uses title and description in the tweet
 <Share 
-  platform="twitter" 
+  platform="x" 
   url="https://example.com" 
   title="Check this out!" 
   description="This is an amazing website you should visit"
@@ -456,7 +455,7 @@ import {
 const customTheme = createTheme({
   platforms: {
     facebook: { name: 'Facebook', color: '#4267B2' },
-    twitter: { name: 'Twitter', color: '#1DA1F2' },
+    x: { name: 'X', color: '#000000' },
     linkedin: { name: 'LinkedIn', color: '#0077b5' }
   },
   button: {
@@ -507,7 +506,7 @@ function App() {
           />
           
           <Share 
-            platform="twitter" 
+            platform="x" 
             title="Check out this awesome page!" 
             hashtags={['react', 'sharing']}
             via="yourTwitterHandle"
@@ -521,7 +520,7 @@ function App() {
         <SocialShareSheet 
           title="Check out this awesome page!"
           description="This is a great resource for React developers"
-          platforms={['facebook', 'twitter', 'linkedin', 'whatsapp', 'telegram', 'email', 'copy']}
+          platforms={['facebook', 'x', 'linkedin', 'whatsapp', 'telegram', 'email', 'slack', 'tumblr']}
           buttonSize="medium"
           buttonVariant="solid"
           buttonShape="rounded"
@@ -536,6 +535,7 @@ function App() {
 ## 📄 License
 
 MIT © [Shahid](https://github.com/shahid-dev018)
+
 
 
 

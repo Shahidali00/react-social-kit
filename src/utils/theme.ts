@@ -36,7 +36,7 @@ export const defaultTheme: Theme = {
     },
     twitter: {
       name: 'Twitter',
-      color: '#1DA1F2'
+      color: '#000000'
     },
     linkedin: {
       name: 'LinkedIn',

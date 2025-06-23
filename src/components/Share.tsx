@@ -1,25 +1,25 @@
 import React from 'react';
 import { useShareContext } from '../context/ShareContext';
 import { useShareTracking } from '../hooks/useShareTracking';
-import { share, ShareOptions } from '../utils/shareApi';
-import { 
-  FacebookIcon, 
-  TwitterIcon, 
-  LinkedInIcon, 
+import { platforms, share, ShareOptions } from '../utils/shareApi';
+import {
+  FacebookIcon,
+  TwitterIcon,
+  LinkedInIcon,
   WhatsAppIcon,
   TelegramIcon,
   EmailIcon,
   RedditIcon,
   PinterestIcon,
-  CopyIcon
+  SlackIcon,
+  TumblrIcon
 } from '../utils/icons';
 
 export interface ShareProps {
   platform: string;
   url?: string;
-  title?: string;
+  title?: string;  // Main message from user
   text?: string;
-  description?: string; // Add explicit description property
   media?: string;
   hashtags?: string[];
   via?: string;
@@ -35,7 +35,7 @@ export interface ShareProps {
   iconStyle?: React.CSSProperties;
   textStyle?: React.CSSProperties;
   size?: 'small' | 'medium' | 'large';
-  iconSize?: number; // New prop for custom icon size
+  iconSize?: number;
   variant?: 'solid' | 'outline' | 'text';
   shape?: 'square' | 'rounded' | 'pill';
   icon?: React.ReactNode;
@@ -49,7 +49,6 @@ export const Share: React.FC<ShareProps> = ({
   url,
   title,
   text,
-  description,
   media,
   hashtags,
   via,
@@ -65,7 +64,7 @@ export const Share: React.FC<ShareProps> = ({
   iconStyle,
   textStyle,
   size = 'medium',
-  iconSize, // New prop for custom icon size
+  iconSize,
   variant = 'solid',
   shape = 'rounded',
   icon,
@@ -80,7 +79,6 @@ export const Share: React.FC<ShareProps> = ({
   const finalUrl = url || context.defaultUrl || '';
   const finalTitle = title || context.defaultTitle || '';
   const finalText = text || context.defaultText || '';
-  const finalDescription = description || context.defaultDescription || '';
   const finalMedia = media || context.defaultMedia || '';
   const finalHashtags = hashtags || context.defaultHashtags || [];
   const finalPreferWebShare = preferWebShare ?? context.preferNative ?? false;
@@ -93,11 +91,10 @@ export const Share: React.FC<ShareProps> = ({
       url: finalUrl,
       title: finalTitle,
       text: finalText,
-      description: finalDescription, // Add description to share options
       media: finalMedia,
       hashtags: finalHashtags,
       via,
-      summary: summary || finalDescription, // Use description as fallback for summary
+      summary,
       source,
       preferWebShare: finalPreferWebShare,
       fallbackToWindow: finalFallbackToWindow,
@@ -175,15 +172,23 @@ export const Share: React.FC<ShareProps> = ({
     // Use iconSize prop if provided, otherwise use size-based dimensions
     const iconDimension = iconSize || (size === 'small' ? 16 : size === 'medium' ? 20 : 24);
     
+    // Get platform config
+    const platformConfig = platforms[platform] || { 
+      name: platform.charAt(0).toUpperCase() + platform.slice(1),
+      color: '#333333',
+      buildUrl: () => ''
+    };
+    
     const iconProps = { 
       size: iconDimension,
       color: showText && variant === 'solid' ? '#fff' : platformConfig.color
     };
     
-    switch (platform) {
+    switch (platform.toLowerCase()) {
       case 'facebook':
         return <FacebookIcon {...iconProps} />;
       case 'twitter':
+      case 'x':
         return <TwitterIcon {...iconProps} />;
       case 'linkedin':
         return <LinkedInIcon {...iconProps} />;
@@ -197,10 +202,21 @@ export const Share: React.FC<ShareProps> = ({
         return <RedditIcon {...iconProps} />;
       case 'pinterest':
         return <PinterestIcon {...iconProps} />;
-      case 'copy':
-        return <CopyIcon {...iconProps} />;
+      case 'slack':
+        return <SlackIcon {...iconProps} />;
+      case 'tumblr':
+        return <TumblrIcon {...iconProps} />;
       default:
-        return null;
+        // For any other platform, return a generic share icon
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" width={iconProps.size} height={iconProps.size} viewBox="0 0 24 24" fill="none" stroke={iconProps.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+        );
     }
   };
   
@@ -236,6 +252,11 @@ export const Share: React.FC<ShareProps> = ({
     </button>
   );
 };
+
+
+
+
+
 
 
 
