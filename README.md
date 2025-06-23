@@ -6,8 +6,6 @@
 
 A comprehensive and customizable social sharing library for React applications. Works seamlessly with both JavaScript (JSX) and TypeScript (TSX) projects.
 
-![Social Share Icons](assets/images/social-icons.png)
-![Social Share Icons](/Users/shahid/Developer/Personal/myProject/react-social-kit/src/assets/images/social-Icons.png)
 ![Social Share Icons](src/assets/images/social-Icons.png)
 
 
