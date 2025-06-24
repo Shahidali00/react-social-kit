@@ -7,20 +7,27 @@
 A comprehensive and customizable social sharing library for React applications. Works seamlessly with both JavaScript (JSX) and TypeScript (TSX) projects.
 
 <p>
-  <img src="https://unpkg.com/react-social-kit/src/assets/images/social-Icons.png" alt="Social Share Icons" width="600" />
+  <img src="https://raw.githubusercontent.com/Shahidali00/react-social-kit/assets/social-Icons.png" alt="Social Share Icons" width="600" />
 </p>
 
 
 <p>
-  <img src="https://i.imgur.com/YourImageID.png" alt="Social Share Icons" width="600" />
+  <img src="https://raw.githubusercontent.com/Shahidali00/react-social-kit/assets/social-Icons.png" alt="Social Share Icons" width="600" />
 </p>
 
 <p >
-  <img src="https://raw.githubusercontent.com/shahid-dev018/react-social-kit/[commit-hash]/src/assets/images/social-Icons.png" alt="Social Share Icons" width="600" />
+  <img src="https://raw.githubusercontent.com/Shahidali00/react-social-kit/assets/social-Icons.png" alt="Social Share Icons" width="600" />
+</p>
+<p >
+  <img src="https://github.com/Shahidali00/react-social-kit/blob/main/src/assets/images/social-Icons.png" alt="Social Share Icons" width="600" />
 </p>
 
-![Demo](https://raw.githubusercontent.com/Shahidali00/react-social-kit/main/assets/social-Icons.png)
+![Social Icons](https://raw.githubusercontent.com/Shahidali00/react-social-kit/assets/social-Icons.png)
 
+
+![Social Icons](https://github.com/Shahidali00/react-social-kit/blob/main/src/assets/images/social-Icons.png)
+
+https://github.com/Shahidali00/react-social-kit/blob/main/src/assets/images/social-Icons.png
 
 
 
