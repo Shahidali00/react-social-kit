@@ -23,9 +23,7 @@ A comprehensive and customizable social sharing library for React applications. 
   - [Button Sizes](#button-sizes)
   - [Button Shapes](#button-shapes)
   - [Custom Theme](#custom-theme)
-- [React Native Support](#-react-native-support)
 - [Analytics Integration](#-analytics-integration)
-- [Web Share API](#-web-share-api)
 - [Next.js App Router Support](#nextjs-app-router-support)
 - [Advanced Usage](#-advanced-usage)
   - [Programmatic Sharing](#programmatic-sharing)
@@ -76,9 +74,7 @@ export default App;
 - **TypeScript Support**: Full TypeScript definitions included
 - **Cross-Platform**: Works with both React and React Native
 - **Customizable**: Multiple themes, variants, and sizes
-- **Web Share API**: Uses native sharing when available
 - **Analytics Ready**: Track sharing events easily
-- **Accessible**: WCAG compliant components
 - **Lightweight**: Small bundle size with tree-shaking
 - **Next.js Compatible**: Works with both Pages Router and App Router
 
@@ -238,36 +234,6 @@ function App() {
   return (
     <ShareProvider theme={customTheme}>
       {/* Your components here */}
-    </ShareProvider>
-  );
-}
-```
-
-## 📱 React Native Support
-
-React Social Kit provides native components for React Native applications:
-
-```jsx
-import { 
-  ShareProvider, 
-  FacebookShareNative, 
-  TwitterShareNative,
-  SocialShareSheetNative 
-} from 'react-social-kit';
-
-function App() {
-  return (
-    <ShareProvider>
-      <FacebookShareNative url="https://example.com" />
-      <TwitterShareNative url="https://example.com" title="Check this out!" />
-      
-      {/* Or use the share sheet */}
-      <SocialShareSheetNative 
-        url="https://example.com"
-        title="Amazing content"
-        description="This is an amazing website you should visit"
-        platforms={['facebook', 'x', 'whatsapp']}
-      />
     </ShareProvider>
   );
 }
@@ -472,26 +438,13 @@ const customTheme = createTheme({
 });
 
 function App() {
-  const handleShareComplete = (result) => {
+  const handleShareComplete = (result: { success: any; platform: any; }) => {
     console.log(`Share ${result.success ? 'succeeded' : 'failed'} on ${result.platform}`);
   };
 
   return (
     <ShareProvider 
-      theme={customTheme}
-      defaultUrl="https://example.com"
-      defaultTitle="Default share title"
-      defaultDescription="Default share description"
-      defaultMedia="https://example.com/image.jpg"
-      defaultHashtags={['react', 'sharing']}
-      preferNative={true}
-      fallbackToWindow={true}
-      onShareComplete={handleShareComplete}
-      analytics={{
-        provider: 'ga',
-        trackingId: 'UA-XXXXXXXX-X'
-      }}
-    >
+     theme={customTheme}>
       <div>
         <h1>Share This Page</h1>
         
@@ -501,19 +454,17 @@ function App() {
             platform="facebook" 
             url="https://example.com/custom-page"
             title="Custom Facebook Title"
-            description="Custom Facebook Description"
             size="medium"
             variant="solid"
             shape="rounded"
             iconSize={24}
-            showText={true}
+            showText={false}
           />
           
           <Share 
             platform="x" 
             title="Check out this awesome page!" 
             hashtags={['react', 'sharing']}
-            via="yourTwitterHandle"
             size="large"
             variant="outline"
             shape="pill"
@@ -523,17 +474,18 @@ function App() {
         {/* Complete social share sheet */}
         <SocialShareSheet 
           title="Check out this awesome page!"
-          description="This is a great resource for React developers"
           platforms={['facebook', 'x', 'linkedin', 'whatsapp', 'telegram', 'email', 'slack', 'tumblr']}
           buttonSize="medium"
           buttonVariant="solid"
-          buttonShape="rounded"
-          showText={true}
+          buttonShape='rounded'
+
         />
       </div>
     </ShareProvider>
   );
 }
+
+export default App;
 ```
 
 ## 📄 License
@@ -542,7 +494,7 @@ MIT
 
 
 
-
+        
 
 
 
