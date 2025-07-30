@@ -1,8 +1,29 @@
 {
   "name": "react-social-kit",
+<<<<<<< HEAD
   "version": "1.0.18",
+=======
+  "version": "1.0.15",
+>>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884
   "description": "The most comprehensive and customizable social sharing library for React",
+  "license": "MIT",
   "type": "module",
+  "keywords": [
+    "react",
+    "social",
+    "sharing",
+    "social-media",
+    "share-buttons",
+    "facebook",
+    "twitter",
+    "linkedin",
+    "pinterest",
+    "reddit",
+    "whatsapp",
+    "telegram",
+    "nextjs",
+    "typescript"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -49,6 +70,3 @@
     "typescript": "^5.8.3"
   }
 }
-
-
-

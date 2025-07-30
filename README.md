@@ -4,9 +4,21 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)](https://www.typescriptlang.org/)
 
-A comprehensive and customizable social sharing library for React applications. Works seamlessly with both JavaScript (JSX) and TypeScript (TSX) projects.
+A comprehensive and customizable social sharing library for React applications. Works seamlessly with both JavaScript (JSX) and TypeScript (TSX) projects, and supports both web and React Native platforms.
 
-![Social Share Icons](src/assets/images/social-Icons.png)
+![Social Icons](https://github.com/Shahidali00/react-social-kit/blob/main/src/assets/social-Icons.png)
+
+### Platform Support:
+- Facebook
+- X (Twitter)
+- Telegram
+- WhatsApp
+- LinkedIn
+- Pinterest
+- Reddit
+- Tumblr
+- Email
+- Slack
 
 
 ## Table of Contents
@@ -57,9 +69,9 @@ function App() {
     <ShareProvider>
       <div style={{ display: 'flex', gap: '10px' }}>
         {/* Individual share buttons */}
-        <Share platform="facebook" url="https://example.com" />
-        <Share platform="x" url="https://example.com" title="Check this out!" />
-        <Share platform="linkedin" url="https://example.com" />
+        <Share platform="whatsapp" iconSize={36} title="Check this out!" url="https://example.com" showCount={true}/>
+        <Share platform="x" iconSize={36} title="Check this out!" url="https://example.com" showCount={true}/>
+        <Share platform="linkedin"  iconSize={36} title="Check this out!" url="https://example.com" showCount={true}/>
       </div>
     </ShareProvider>
   );
@@ -91,12 +103,11 @@ The main component for all sharing functionality:
 // With custom icon size
 <Share platform="facebook" url="https://example.com" iconSize={36} />
 
-// With title and description
+// With Just Icons
 <Share 
   platform="x" 
   url="https://example.com" 
   title="Check this out!" 
-  description="This is an amazing website you should visit"
   hashtags={['react', 'javascript']} 
   iconSize={32}
 />
@@ -106,31 +117,22 @@ The main component for all sharing functionality:
   platform="x" 
   url="https://example.com" 
   title="Check this out!" 
-  description="This is an amazing website you should visit"
   hashtags={['react', 'javascript']} 
-  showText
+  showText={true}
 />
 ```
 
-The `description` prop is used to provide additional context in the share message. Each platform uses it differently:
+The `title` prop is used to provide the main share message.
 
-- **X (Twitter)**: Used as the tweet text if no `text` prop is provided
-- **Facebook**: Included as the post description
-- **LinkedIn**: Used as the summary if no `summary` prop is provided
-- **WhatsApp**: Combined with the URL in the message
-- **Telegram**: Included in the message text
-- **Email**: Used in the email body
-- **Pinterest**: Used as the pin description
-- **Reddit**: Not used (Reddit only supports title and URL)
 
-You can set a default description for all share components using the `ShareProvider`:
+<!-- You can set a default description for all share components using the `ShareProvider`:
 
 ```jsx
 <ShareProvider defaultDescription="Check out this amazing content!">
   {/* All Share components will use this description unless overridden */}
   <Share platform="x" url="https://example.com" />
 </ShareProvider>
-```
+``` -->
 
 ### Share Sheet
 
@@ -141,7 +143,6 @@ Display multiple share options in a grid:
 <SocialShareSheet 
   url="https://example.com"
   title="Check out this site"
-  description="This is an amazing website you should visit"
   platforms={['facebook', 'x', 'linkedin', 'whatsapp', 'slack']}
   iconSize={36}
 />
@@ -150,31 +151,13 @@ Display multiple share options in a grid:
 <SocialShareSheet 
   url="https://example.com"
   title="Check out this site"
-  description="This is an amazing website you should visit"
   platforms={['facebook', 'x', 'linkedin', 'whatsapp', 'slack']}
-  showText
+  showText={true}
 />
 ```
 
-The `description` prop in `SocialShareSheet` is passed to all individual share buttons, ensuring consistent messaging across all platforms.
+The `title` prop in `SocialShareSheet` is passed to all individual share buttons, ensuring consistent messaging across all platforms.
 
-### Supported Platforms
-
-React Social Kit supports the following platforms out of the box:
-
-| Platform | Key | Description |
-|----------|-----|-------------|
-| Facebook | `facebook` | Share to Facebook timeline |
-| X (Twitter) | `x` or `twitter` | Share via X with optional hashtags |
-| LinkedIn | `linkedin` | Share to LinkedIn with title and summary |
-| Pinterest | `pinterest` | Pin with image URL and description |
-| Reddit | `reddit` | Share to Reddit with title |
-| WhatsApp | `whatsapp` | Share via WhatsApp with message |
-| Telegram | `telegram` | Share via Telegram with message |
-| Email | `email` | Share via email with subject and body |
-| Slack | `slack` | Share to Slack workspace |
-| Tumblr | `tumblr` | Share to Tumblr blog |
-| Native | `native` | Use Web Share API when available |
 
 ## 🎨 Customization
 
@@ -239,6 +222,38 @@ function App() {
 }
 ```
 
+<<<<<<< HEAD
+=======
+## 📱 React Native Support
+
+React Social Kit provides native components for React Native applications:
+
+```jsx
+import { 
+  ShareProvider, 
+  FacebookShareNative, 
+  TwitterShareNative,
+  SocialShareSheetNative 
+} from 'react-social-kit';
+
+function App() {
+  return (
+    <ShareProvider>
+      <FacebookShareNative url="https://example.com" />
+      <TwitterShareNative url="https://example.com" title="Check this out!" />
+      
+      {/* Or use the share sheet */}
+      <SocialShareSheetNative 
+        url="https://example.com"
+        title="Amazing content"
+        platforms={['facebook', 'x', 'whatsapp']}
+      />
+    </ShareProvider>
+  );
+}
+```
+
+>>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884
 ## 📊 Analytics Integration
 
 Track when users share content with built-in analytics support:
@@ -298,7 +313,6 @@ function ShareComponent() {
         <SocialShareSheet 
           url="https://example.com"
           title="Check this out"
-          description="Amazing content for developers"
         />
       )}
     </div>
@@ -357,7 +371,6 @@ const handleShare = async () => {
   const result = await share('x', {
     url: 'https://example.com',
     title: 'Check this out!',
-    description: 'This is an amazing website you should visit', // Used in the share message
     hashtags: ['react', 'javascript']
   });
   
@@ -368,44 +381,6 @@ const handleShare = async () => {
 
 // Use in event handlers
 <button onClick={handleShare}>Share via X</button>
-```
-
-### Platform-Specific Sharing
-
-Different platforms handle the `title` and `description` props differently:
-
-```jsx
-// X (Twitter) - Uses title and description in the tweet
-<Share 
-  platform="x" 
-  url="https://example.com" 
-  title="Check this out!" 
-  description="This is an amazing website you should visit"
-  hashtags={['react', 'javascript']} 
-/>
-
-// WhatsApp - Combines description with URL
-<Share 
-  platform="whatsapp" 
-  url="https://example.com" 
-  description="You have to see this amazing website:"
-/>
-
-// Email - Uses title as subject and description in body
-<Share 
-  platform="email" 
-  url="https://example.com" 
-  title="Amazing website" 
-  description="I found this website and thought you might like it"
-/>
-
-// LinkedIn - Uses title and description as summary
-<Share 
-  platform="linkedin" 
-  url="https://example.com" 
-  title="Great resource" 
-  description="A comprehensive guide to React development"
-/>
 ```
 
 ### Complete Configuration Example
@@ -444,7 +419,11 @@ function App() {
 
   return (
     <ShareProvider 
+<<<<<<< HEAD
      theme={customTheme}>
+=======
+    >
+>>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884
       <div>
         <h1>Share This Page</h1>
         
@@ -475,10 +454,17 @@ function App() {
         <SocialShareSheet 
           title="Check out this awesome page!"
           platforms={['facebook', 'x', 'linkedin', 'whatsapp', 'telegram', 'email', 'slack', 'tumblr']}
+<<<<<<< HEAD
           buttonSize="medium"
           buttonVariant="solid"
           buttonShape='rounded'
 
+=======
+          size="medium"
+          variant="solid"
+          shape="rounded"
+          showText={true}
+>>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884
         />
       </div>
     </ShareProvider>
@@ -491,6 +477,7 @@ export default App;
 ## 📄 License
 
 MIT 
+<<<<<<< HEAD
 
 
 
@@ -498,3 +485,5 @@ MIT
 
 
 
+=======
+>>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884

@@ -5,7 +5,8 @@ const { Linking, Platform, TouchableOpacity, Text, StyleSheet } = getReactNative
 
 export interface WhatsAppShareNativeProps {
   url: string;
-  message?: string;
+  title?: string;  // Main message (matching web component)
+  text?: string;   // Additional text (matching web component)
   children?: React.ReactNode;
   onShareComplete?: (result: { success: boolean; platform: string }) => void;
   style?: any;
@@ -14,7 +15,8 @@ export interface WhatsAppShareNativeProps {
 
 export const WhatsAppShareNative: React.FC<WhatsAppShareNativeProps> = ({
   url,
-  message = '',
+  title,
+  text,
   children,
   onShareComplete,
   style,
@@ -22,6 +24,8 @@ export const WhatsAppShareNative: React.FC<WhatsAppShareNativeProps> = ({
 }) => {
   const handleShare = async () => {
     try {
+      // Combine title and text for the message
+      const message = title || text || '';
       const whatsappMessage = message ? `${message} ${url}` : url;
       const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(whatsappMessage)}`;
       
@@ -41,7 +45,7 @@ export const WhatsAppShareNative: React.FC<WhatsAppShareNativeProps> = ({
       
       // Fallback to web version on error
       try {
-        const webWhatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message ? `${message} ${url}` : url)}`;
+        const webWhatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title ? `${title} ${url}` : url)}`;
         await Linking.openURL(webWhatsappUrl);
         
         if (onShareComplete) {
@@ -78,7 +82,8 @@ export const WhatsAppShareNative: React.FC<WhatsAppShareNativeProps> = ({
       accessibilityRole="button"
       accessibilityLabel="Share on WhatsApp"
     >
-      {children || <Text style={[styles.text, textStyle]}>Share on WhatsApp</Text>}
+      {children || <Text style={[styles.text, textStyle]}>WhatsApp</Text>}
     </TouchableOpacity>
   );
 };
+
