@@ -67,7 +67,7 @@ import {
 function App() {
   return (
     <ShareProvider>
-      <div style={{ display: 'flex', gap: '10px' }}>
+      {% raw %}<div style={{ display: 'flex', gap: '10px' }}>{% endraw %}
         {/* Individual share buttons */}
         <Share platform="whatsapp" iconSize={36} title="Check this out!" url="https://example.com" showCount={true}/>
         <Share platform="x" iconSize={36} title="Check this out!" url="https://example.com" showCount={true}/>
@@ -244,14 +244,14 @@ function App() {
     <ShareProvider 
       onShareComplete={handleShareComplete}
       // Optional: configure analytics provider
-      analytics={{
+      {% raw %}analytics={{
         provider: 'ga', // 'ga', 'gtm', 'segment', 'custom'
         trackingId: 'UA-XXXXXXXX-X', // Your tracking ID
         // Optional custom tracker function
         customTracker: (eventName, data) => {
           console.log('Custom tracking:', eventName, data);
         }
-      }}
+      }}{% endraw %}
     >
       {/* Your components here */}
     </ShareProvider>
@@ -391,7 +391,7 @@ function App() {
         <h1>Share This Page</h1>
         
         {/* Individual share buttons */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        {% raw %}<div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>{% endraw %}
           <Share 
             platform="facebook" 
             url="https://example.com/custom-page"

@@ -15,19 +15,6 @@ export { SocialShareSheet } from './components/SocialShareSheet';
 // Remove CopyLinkButton export
 // export { CopyLinkButton } from './components/CopyLinkButton';
 
-// Native Components
-// Remove CopyLinkNative export
-// export { CopyLinkNative } from './native/CopyLinkNative';
-export { SocialShareSheetNative } from './native/SocialShareSheetNative';
-export { ShareSheetNative } from './native/ShareSheetNative';
-export { FacebookShareNative } from './native/FacebookShareNative';
-export { TwitterShareNative } from './native/TwitterShareNative';
-export { WhatsAppShareNative } from './native/WhatsAppShareNative';
-export { TelegramShareNative } from './native/TelegramShareNative';
-export { RedditShareNative } from './native/RedditShareNative';
-export { EmailShareNative } from './native/EmailShareNative';
-export { SlackShareNative } from './native/SlackShareNative';
-
 // Context and Hooks
 export { ShareProvider, useShareContext } from './context/ShareContext';
 export { useShareTracking } from './hooks/useShareTracking';
