@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)](https://www.typescriptlang.org/)
 
-A comprehensive and customizable social sharing library for React applications. Works seamlessly with both JavaScript (JSX) and TypeScript (TSX) projects, and supports both web and React Native platforms.
+A comprehensive and customizable social sharing library for React applications. Works seamlessly with both JavaScript (JSX) and TypeScript (TSX) projects.
 
 ![Social Icons](https://github.com/Shahidali00/react-social-kit/blob/main/src/assets/social-Icons.png)
 
@@ -84,7 +84,6 @@ export default App;
 
 - **Easy to Use**: Simple API with sensible defaults
 - **TypeScript Support**: Full TypeScript definitions included
-- **Cross-Platform**: Works with both React and React Native
 - **Customizable**: Multiple themes, variants, and sizes
 - **Analytics Ready**: Track sharing events easily
 - **Lightweight**: Small bundle size with tree-shaking
@@ -222,38 +221,6 @@ function App() {
 }
 ```
 
-<<<<<<< HEAD
-=======
-## 📱 React Native Support
-
-React Social Kit provides native components for React Native applications:
-
-```jsx
-import { 
-  ShareProvider, 
-  FacebookShareNative, 
-  TwitterShareNative,
-  SocialShareSheetNative 
-} from 'react-social-kit';
-
-function App() {
-  return (
-    <ShareProvider>
-      <FacebookShareNative url="https://example.com" />
-      <TwitterShareNative url="https://example.com" title="Check this out!" />
-      
-      {/* Or use the share sheet */}
-      <SocialShareSheetNative 
-        url="https://example.com"
-        title="Amazing content"
-        platforms={['facebook', 'x', 'whatsapp']}
-      />
-    </ShareProvider>
-  );
-}
-```
-
->>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884
 ## 📊 Analytics Integration
 
 Track when users share content with built-in analytics support:
@@ -419,11 +386,7 @@ function App() {
 
   return (
     <ShareProvider 
-<<<<<<< HEAD
      theme={customTheme}>
-=======
-    >
->>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884
       <div>
         <h1>Share This Page</h1>
         
@@ -454,17 +417,11 @@ function App() {
         <SocialShareSheet 
           title="Check out this awesome page!"
           platforms={['facebook', 'x', 'linkedin', 'whatsapp', 'telegram', 'email', 'slack', 'tumblr']}
-<<<<<<< HEAD
+          iconSize={34}
           buttonSize="medium"
           buttonVariant="solid"
           buttonShape='rounded'
 
-=======
-          size="medium"
-          variant="solid"
-          shape="rounded"
-          showText={true}
->>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884
         />
       </div>
     </ShareProvider>
@@ -477,7 +434,6 @@ export default App;
 ## 📄 License
 
 MIT 
-<<<<<<< HEAD
 
 
 
@@ -485,5 +441,3 @@ MIT
 
 
 
-=======
->>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884

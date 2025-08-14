@@ -1,10 +1,6 @@
 {
   "name": "react-social-kit",
-<<<<<<< HEAD
-  "version": "1.0.18",
-=======
-  "version": "1.0.15",
->>>>>>> 0df1195bbfc9bc6deda04a70ad6d73e7dd40c884
+  "version": "1.0.20",
   "description": "The most comprehensive and customizable social sharing library for React",
   "license": "MIT",
   "type": "module",
